@@ -1,8 +1,8 @@
 //========================================================================
-// GLFW 3.3 EGL - www.glfw.org
+// GLFW 3.4 EGL - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
-// Copyright (c) 2006-2016 Camilla Löwy <elmindreda@glfw.org>
+// Copyright (c) 2006-2019 Camilla Löwy <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -23,6 +23,8 @@
 // 3. This notice may not be removed or altered from any source
 //    distribution.
 //
+//========================================================================
+// Please use C89 style variable declarations in this file because VS 2010
 //========================================================================
 
 #include "internal.h"
@@ -129,9 +131,25 @@ static GLFWbool chooseEGLConfig(const _GLFWctxconfig* ctxconfig,
 #endif
 
 #if defined(_GLFW_X11)
+        XVisualInfo vi = {0};
+
         // Only consider EGLConfigs with associated Visuals
-        if (!getEGLConfigAttrib(n, EGL_NATIVE_VISUAL_ID))
+        vi.visualid = getEGLConfigAttrib(n, EGL_NATIVE_VISUAL_ID);
+        if (!vi.visualid)
             continue;
+
+        if (desired->transparent)
+        {
+            int count;
+            XVisualInfo* vis = XGetVisualInfo(_glfw.x11.display,
+                                              VisualIDMask, &vi,
+                                              &count);
+            if (vis)
+            {
+                u->transparent = _glfwIsVisualTransparentX11(vis[0].visual);
+                XFree(vis);
+            }
+        }
 #endif // _GLFW_X11
 
         if (ctxconfig->client == GLFW_OPENGL_ES_API)
@@ -442,7 +460,7 @@ void _glfwTerminateEGL(void)
 
 #define setAttrib(a, v) \
 { \
-    assert((size_t) (index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
+    assert(((size_t) index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
     attribs[index++] = a; \
     attribs[index++] = v; \
 }
@@ -705,7 +723,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 // Returns the Visual and depth of the chosen EGLConfig
 //
 #if defined(_GLFW_X11)
-GLFWbool _glfwChooseVisualEGL(const _GLFWctxconfig* ctxconfig,
+GLFWbool _glfwChooseVisualEGL(const _GLFWwndconfig* wndconfig,
+                              const _GLFWctxconfig* ctxconfig,
                               const _GLFWfbconfig* fbconfig,
                               Visual** visual, int* depth)
 {

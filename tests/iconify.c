@@ -28,7 +28,8 @@
 //
 //========================================================================
 
-#include <glad/glad.h>
+#include <glad/gl.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -127,8 +128,6 @@ static void window_size_callback(GLFWwindow* window, int width, int height)
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     printf("%0.2f Framebuffer resized to %ix%i\n", glfwGetTime(), width, height);
-
-    glViewport(0, 0, width, height);
 }
 
 static void window_focus_callback(GLFWwindow* window, int focused)
@@ -193,7 +192,7 @@ static GLFWwindow* create_window(GLFWmonitor* monitor)
     }
 
     glfwMakeContextCurrent(window);
-    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    gladLoadGL(glfwGetProcAddress);
 
     return window;
 }

@@ -28,7 +28,8 @@
 //
 //========================================================================
 
-#include <glad/glad.h>
+#include <glad/gl.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #define NK_IMPLEMENTATION
@@ -85,6 +86,32 @@ static void joystick_callback(int jid, int event)
         glfwRequestWindowAttention(window);
 }
 
+static void drop_callback(GLFWwindow* window, int count, const char* paths[])
+{
+    int i;
+
+    for (i = 0;  i < count;  i++)
+    {
+        long size;
+        char* text;
+        FILE* stream = fopen(paths[i], "rb");
+        if (!stream)
+            continue;
+
+        fseek(stream, 0, SEEK_END);
+        size = ftell(stream);
+        fseek(stream, 0, SEEK_SET);
+
+        text = malloc(size + 1);
+        text[size] = '\0';
+        if (fread(text, 1, size, stream) == size)
+            glfwUpdateGamepadMappings(text);
+
+        free(text);
+        fclose(stream);
+    }
+}
+
 static const char* joystick_label(int jid)
 {
     static char label[1024];
@@ -98,7 +125,7 @@ static void hat_widget(struct nk_context* nk, unsigned char state)
     struct nk_rect area;
     struct nk_vec2 center;
 
-    if (nk_widget(&area, nk) != NK_WIDGET_VALID)
+    if (nk_widget(&area, nk) == NK_WIDGET_INVALID)
         return;
 
     center = nk_vec2(area.x + area.w / 2.f, area.y + area.h / 2.f);
@@ -131,13 +158,13 @@ static void hat_widget(struct nk_context* nk, unsigned char state)
         const struct nk_vec2 p2 = nk_vec2(-radius / 2.f, -radius / 3.f);
 
         nk_fill_triangle(nk_window_get_canvas(nk),
-                            center.x + cosa * p0.x + sina * p0.y,
-                            center.y + cosa * p0.y - sina * p0.x,
-                            center.x + cosa * p1.x + sina * p1.y,
-                            center.y + cosa * p1.y - sina * p1.x,
-                            center.x + cosa * p2.x + sina * p2.y,
-                            center.y + cosa * p2.y - sina * p2.x,
-                            nk_rgb(175, 175, 175));
+                         center.x + cosa * p0.x + sina * p0.y,
+                         center.y + cosa * p0.y - sina * p0.x,
+                         center.x + cosa * p1.x + sina * p1.y,
+                         center.y + cosa * p1.y - sina * p1.x,
+                         center.x + cosa * p2.x + sina * p2.y,
+                         center.y + cosa * p2.y - sina * p2.x,
+                         nk_rgb(175, 175, 175));
     }
 }
 
@@ -154,6 +181,9 @@ int main(void)
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+    glfwWindowHint(GLFW_WIN32_KEYBOARD_MENU, GLFW_TRUE);
+
     window = glfwCreateWindow(800, 600, "Joystick Test", NULL, NULL);
     if (!window)
     {
@@ -162,7 +192,7 @@ int main(void)
     }
 
     glfwMakeContextCurrent(window);
-    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
 
     nk = nk_glfw3_init(window, NK_GLFW3_INSTALL_CALLBACKS);
@@ -176,6 +206,7 @@ int main(void)
     }
 
     glfwSetJoystickCallback(joystick_callback);
+    glfwSetDropCallback(window, drop_callback);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -269,7 +300,9 @@ int main(void)
                         "LT", "RT",
                     };
 
-                    nk_label(nk, "Gamepad state", NK_TEXT_LEFT);
+                    nk_labelf(nk, NK_TEXT_LEFT,
+                              "Gamepad state: %s",
+                              glfwGetGamepadName(joysticks[i]));
 
                     nk_layout_row_dynamic(nk, 30, 2);
 
