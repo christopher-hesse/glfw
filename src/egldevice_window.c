@@ -428,3 +428,42 @@ VkResult _glfwPlatformCreateWindowSurface(VkInstance instance,
     return VK_ERROR_INITIALIZATION_FAILED;
 }
 
+float _glfwPlatformGetWindowOpacity(_GLFWwindow* window)
+{
+    return 1.f;
+}
+
+int _glfwPlatformFramebufferTransparent(_GLFWwindow* window)
+{
+    return GLFW_FALSE;
+}
+
+void _glfwPlatformGetWindowContentScale(_GLFWwindow* window,
+                                        float* xscale, float* yscale)
+{
+    if (xscale)
+        *xscale = 1.f;
+    if (yscale)
+        *yscale = 1.f;
+}
+
+
+GLFWbool _glfwPlatformRawMouseMotionSupported(void)
+{
+    return GLFW_FALSE;
+}
+
+void _glfwPlatformSetRawMouseMotion(_GLFWwindow *window, GLFWbool enabled)
+{
+}
+
+
+int _glfwPlatformWindowHovered(_GLFWwindow* window)
+{
+    return GLFW_FALSE;
+}
+
+
+void _glfwPlatformSetWindowOpacity(_GLFWwindow* window, float opacity)
+{
+}
