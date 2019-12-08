@@ -376,7 +376,7 @@ void _glfwPlatformSetCursor(_GLFWwindow* window, _GLFWcursor* cursor)
                     "EGLDevice: _glfwPlatformSetCursor not supported");
 }
 
-void _glfwPlatformSetClipboardString(_GLFWwindow* window, const char* string)
+void _glfwPlatformSetClipboardString(const char* string)
 {
     _glfwInputError(GLFW_PLATFORM_ERROR,
                     "EGLDevice: _glfwPlatformSetClipboardString not supported");
