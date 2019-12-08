@@ -382,7 +382,7 @@ void _glfwPlatformSetClipboardString(const char* string)
                     "EGLDevice: _glfwPlatformSetClipboardString not supported");
 }
 
-const char* _glfwPlatformGetClipboardString(_GLFWwindow* window)
+const char* _glfwPlatformGetClipboardString(void)
 {
     _glfwInputError(GLFW_PLATFORM_ERROR,
                     "EGLDevice: _glfwPlatformGetClipboardString not supported");
