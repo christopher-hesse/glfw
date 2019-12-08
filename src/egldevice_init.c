@@ -93,7 +93,7 @@ static EGLDeviceEXT getEGLDevice(void)
     if (!eglQueryDevicesEXT(0, NULL, &num_devs))
     {
         _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "EGLDevice: Falied to query EGLDevice");
+                        "EGLDevice: Failed to query EGLDevice");
     }
     if (num_devs < 1)
     {
