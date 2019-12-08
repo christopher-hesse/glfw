@@ -55,15 +55,6 @@ static GLFWbool initializeExtensions(void)
         (PFNEGLCREATESTREAMPRODUCERSURFACEKHRPROC)
             eglGetProcAddress("eglCreateStreamProducerSurfaceKHR");
 
-    printf("_glfw.egldevice.QueryDevicesEXT %p\n", _glfw.egldevice.QueryDevicesEXT);
-    printf("_glfw.egldevice.QueryDeviceStringEXT %p\n", _glfw.egldevice.QueryDeviceStringEXT);
-    printf("_glfw.egldevice.GetPlatformDisplayEXT %p\n", _glfw.egldevice.GetPlatformDisplayEXT);
-    printf("_glfw.egldevice.GetOutputLayersEXT %p\n", _glfw.egldevice.GetOutputLayersEXT);
-    printf("_glfw.egldevice.CreateStreamKHR %p\n", _glfw.egldevice.CreateStreamKHR);
-    printf("_glfw.egldevice.DestroyStreamKHR %p\n", _glfw.egldevice.DestroyStreamKHR);
-    printf("_glfw.egldevice.StreamConsumerOutputEXT %p\n", _glfw.egldevice.StreamConsumerOutputEXT);
-    printf("_glfw.egldevice.CreateStreamProducerSurfaceKHR %p\n", _glfw.egldevice.CreateStreamProducerSurfaceKHR);
-
     if(!_glfw.egldevice.QueryDevicesEXT ||
        !_glfw.egldevice.QueryDeviceStringEXT ||
        !_glfw.egldevice.GetPlatformDisplayEXT ||
